@@ -54,7 +54,12 @@ namespace PhysicsEngine
 #else
 			physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale(), true, pvd);
 #endif
-		PxInitExtensions(*physics, pvd);
+		if (!PxInitExtensions(*physics, pvd)) {
+			throw new Exception("PhysicsEngine::PxInit, Could not initialise the PhysX Extensions.");
+		}
+		if (!PxInitVehicleSDK(*physics)) {
+			throw new Exception("PhysicsEngine::PxInit, Could not initialise the PhysX Vehicle SDK.");
+		}
 		if (!physics)
 			throw new Exception("PhysicsEngine::PxInit, Could not initialise the PhysX SDK.");
 
@@ -70,6 +75,8 @@ namespace PhysicsEngine
 
 	void PxRelease()
 	{
+		PxCloseVehicleSDK();
+		PxCloseExtensions();
 		if (cooking)
 			cooking->release();
 		if (physics)
@@ -233,6 +240,7 @@ namespace PhysicsEngine
 			((UserData*)GetShape(i)->userData)->color = &colors[i];
 	}
 
+
 	void DynamicActor::SetKinematic(bool value, PxU32 index)
 	{
 #if PX_PHYSICS_VERSION < 0x304000 // SDK 3.3
@@ -300,7 +308,7 @@ namespace PhysicsEngine
 		if (pause)
 			return;
 
-		CustomUpdate();
+		CustomUpdate(dt);
 
 		px_scene->simulate(dt);
 		px_scene->fetchResults(true);

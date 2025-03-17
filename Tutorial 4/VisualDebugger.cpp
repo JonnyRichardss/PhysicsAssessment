@@ -3,7 +3,7 @@
 #include "Extras\Camera.h"
 #include "Extras\Renderer.h"
 #include "Extras\HUD.h"
-
+#include "MyScene.h"
 namespace VisualDebugger
 {
 	using namespace physx;
@@ -176,7 +176,7 @@ namespace VisualDebugger
 		switch (toupper(key))
 		{
 		//implement your own
-		case 'R':
+		case ' ':
 			scene->ExampleKeyPressHandler();
 			break;
 		default:
@@ -199,6 +199,20 @@ namespace VisualDebugger
 
 	void UserKeyHold(int key)
 	{
+		switch (toupper(key)) {
+		case '4':
+			scene->IncrementL();
+			break;
+		case '1':
+			scene->DecrementL();
+			break;
+		case '6':
+			scene->IncrementR();
+			break;
+		case '3':
+			scene->DecrementR();
+			break;
+		}
 	}
 
 	//handle camera control keys

@@ -1,17 +1,15 @@
 #pragma once
-
 #include "Renderer.h"
 #include <string>
 #include <list>
 
 namespace VisualDebugger
 {
-	using namespace std;
 
 	///A single HUD screen
 	class HUDScreen
 	{
-		vector<string> content;
+		std::vector<std::string> content;
 
 	public:
 		int id;
@@ -24,7 +22,7 @@ namespace VisualDebugger
 		}
 
 		///Add a single line of text
-		void AddLine(string line)
+		void AddLine(std::string line)
 		{
 			content.push_back(line);
 		}
@@ -47,7 +45,7 @@ namespace VisualDebugger
 	class HUD
 	{
 		int active_screen;
-		vector<HUDScreen*> screens;
+		std::vector<HUDScreen*> screens;
 
 	public:
 		~HUD()
@@ -57,7 +55,7 @@ namespace VisualDebugger
 		}
 
 		///Add a single line to a specific screen
-		void AddLine(int screen_id, string line)
+		void AddLine(int screen_id, std::string line)
 		{
 			for (unsigned int i = 0; i < screens.size(); i++)
 			{
