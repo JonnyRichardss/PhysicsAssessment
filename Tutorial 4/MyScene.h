@@ -23,12 +23,14 @@ class MyScene : public Scene
 	MySimulationEventCallback* my_callback;
 	VehicleActor* vehicleActor;
 	PxVehicleDriveTank* vehicle;
-	PxVehicleDriveTankRawInputData vehicleInput = PxVehicleDriveTankRawInputData(PxVehicleDriveTankControlModel::Enum::eSTANDARD);
+	PxVehicleDriveTankRawInputData vehicleInput = PxVehicleDriveTankRawInputData(PxVehicleDriveTankControlModel::Enum::eSPECIAL);
 	PxVehicleDrivableSurfaceToTireFrictionPairs* FrictionPairs;
 	snippetvehicle::VehicleSceneQueryData* vehicleSceneQueryData;
 	PxBatchQuery* batchQuery;
 	float InputL;
 	float InputR;
+	float InputThrottle;
+	bool InputBrake;
 public:
 	//specify your custom filter shader here
 	//PxDefaultSimulationFilterShader by default
@@ -50,6 +52,11 @@ public:
 	/// An example use of key presse handling
 	void ExampleKeyPressHandler();
 
+	void PressBrake();
+	void ReleaseBrake();
+
+	void IncrementThrottle();
+	void DecrementThrottle();
 	void IncrementL();
 	void DecrementL();
 	void IncrementR();

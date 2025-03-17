@@ -4,7 +4,7 @@ VehicleActor::VehicleActor(const PxTransform& pose) : DynamicActor(pose)
 {
 	//need wheelSimFilterData , chassisSimFilterData, chassisData, wheelMaterial, chassisMaterial, wheelGeometry, ChassisGeometry
 
-	const int numWheels = 8;
+	const int numWheels = 12;
 	//SnippetVehicleTank :: initTankDesc
 	const PxF32 chassisMass = 15000.0f;
 	const PxVec3 chassisDims(3.5f, 2.0f, 9.0f);
@@ -23,10 +23,11 @@ VehicleActor::VehicleActor(const PxTransform& pose) : DynamicActor(pose)
 	PxFilterData chassisSimFilterData = PxFilterData(4, 32, 0, 0);
 	PxFilterData wheelSimFilterData = PxFilterData(2, 14, 0, 0);
 
-	TyreMaterial = CreateMaterial(0.5, 0.5, 0.5);
+	TyreMaterial = CreateMaterial(0.5, 0.7, 0.5);
 	ChassisMaterial = CreateMaterial(0.5, 0.5, 0.5);
 
 	PxSphereGeometry WheelGeometry = PxSphereGeometry(0.5f);
+	//PxCapsuleGeometry WheelGeometry = PxCapsuleGeometry(0.5f, 0.5f);
 	PxBoxGeometry ChassisGeometry = PxBoxGeometry(chassisDims / 2);
 
 
@@ -92,7 +93,7 @@ VehicleActor::VehicleActor(const PxTransform& pose) : DynamicActor(pose)
 	{
 		//Set up the engine to be more powerful but also more damped than the default engine.
 		PxVehicleEngineData engineData = driveSimData.getEngineData();
-		engineData.mPeakTorque *= 2.0f;
+		engineData.mPeakTorque *= 40.0f;
 		engineData.mDampingRateZeroThrottleClutchEngaged = 2.0f;
 		engineData.mDampingRateZeroThrottleClutchDisengaged = 0.5f;
 		engineData.mDampingRateFullThrottle = 0.5f;

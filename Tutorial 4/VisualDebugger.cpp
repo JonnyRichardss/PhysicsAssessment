@@ -176,8 +176,11 @@ namespace VisualDebugger
 		switch (toupper(key))
 		{
 		//implement your own
-		case ' ':
+		case 'R':
 			scene->ExampleKeyPressHandler();
+			break;
+		case ' ':
+			scene->PressBrake();
 			break;
 		default:
 			break;
@@ -191,6 +194,9 @@ namespace VisualDebugger
 		//implement your own
 		case 'R':
 			scene->ExampleKeyReleaseHandler();
+			break;
+		case ' ':
+			scene->ReleaseBrake();
 			break;
 		default:
 			break;
@@ -212,6 +218,12 @@ namespace VisualDebugger
 		case '3':
 			scene->DecrementR();
 			break;
+		case '7':
+			scene->DecrementThrottle();
+			break;
+		case'9':
+			scene->IncrementThrottle();
+			break;
 		}
 	}
 
@@ -232,18 +244,20 @@ namespace VisualDebugger
 		case 'D':
 			camera->MoveRight(delta_time);
 			break;
-		case 'Q':
+		case 'E':
 			camera->MoveUp(delta_time);
 			break;
-		case 'E':
+		case 'Q':
 			camera->MoveDown(delta_time);
 			break;
+			/*
 		case ' ': {
 			PxVec3 eye = camera->getEye();
 			PxVec3 dir = camera->getDir();
 			printf("Camera Transform:\nEye: x:%f y:%f z:%f\nDir: x:%f y:%f z:%f\n", eye.x, eye.y, eye.z, dir.x, dir.y, dir.z);
 			break;
 		}
+		*/
 		default:
 			break;
 		}

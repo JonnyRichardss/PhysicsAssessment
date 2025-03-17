@@ -72,7 +72,7 @@ void MyScene::CustomInit()
 {
 	SetVisualisation();
 
-	GetMaterial()->setDynamicFriction(.2f);
+	//GetMaterial()->setDynamicFriction(.2f);
 
 	///Initialise and set the customised event callback
 	my_callback = new MySimulationEventCallback();
@@ -85,7 +85,7 @@ void MyScene::CustomInit()
 	vehicleSceneQueryData = snippetvehicle::VehicleSceneQueryData::allocate(1, PX_MAX_NB_WHEELS, 1, 1, snippetvehicle::WheelSceneQueryPreFilterBlocking, NULL, PxDefaultAllocator());
 	batchQuery = snippetvehicle::VehicleSceneQueryData::setUpBatchedSceneQuery(0, *vehicleSceneQueryData, px_scene);
 	{
-		PxMaterial* planeMat = CreateMaterial(0.5, 0.5, 0.5);
+		PxMaterial* planeMat = CreateMaterial(0.5, 1.0, 0.5);
 		FrictionPairs = createFrictionPairs(planeMat);
 		PxFilterData groundPlaneSimFilterData(1, 28, 0, 0);
 		plane = new Plane();
@@ -126,7 +126,7 @@ void MyScene::CustomInit()
 	vehicle->setToRestState();
 	vehicle->mDriveDynData.forceGearChange(PxVehicleGearsData::eFIRST);
 	vehicle->mDriveDynData.setUseAutoGears(true);
-	vehicle->setDriveModel(PxVehicleDriveTankControlModel::eSTANDARD);
+	vehicle->setDriveModel(PxVehicleDriveTankControlModel::eSPECIAL);
 
 }
 //snippednestedScene.cpp
@@ -151,12 +151,22 @@ static int test = 0;
 //Custom udpate function
 void MyScene::CustomUpdate(PxReal deltaTime)
 {
-	vehicleInput.setAnalogAccel((abs(InputL) + abs(InputR))/2.0f);
-	//vehicleInput.setAnalogAccel(.2);
+	//vehicleInput.setAnalogAccel((abs(InputL) + abs(InputR))/2.0f);
+	vehicleInput.setAnalogAccel(InputThrottle);
 	vehicleInput.setAnalogLeftThrust(InputL);
 	vehicleInput.setAnalogRightThrust(InputR);
 	//vehicleInput.setAnalogLeftBrake(-InputL);
 	//vehicleInput.setAnalogRightBrake(-InputR);
+
+	if (InputBrake) {
+		vehicleInput.setAnalogLeftBrake(1.0f);
+		vehicleInput.setAnalogRightBrake(1.0f);
+	}
+	else {
+		vehicleInput.setAnalogLeftBrake(0.0f);
+		vehicleInput.setAnalogRightBrake(0.0f);
+	}
+
 	PxVehicleDriveTankSmoothAnalogRawInputsAndSetAnalogInputs(gPadSmoothingData, vehicleInput, deltaTime, *vehicle);
 	PxVehicleWheels* vehicles[1] = { vehicle };
 
@@ -175,7 +185,7 @@ static bool currentGear = true;
 void MyScene::CustomRender() {
 	PxVec3 BallLocation = ball->GetRigidBody()->getGlobalPose().p;
 	char buf[100];
-	snprintf(buf, (size_t)100, "Ball Pos: x:%f y:%f z:%f          L:%f          R:%f     Gear: %i\0", BallLocation.x, BallLocation.y, BallLocation.z,InputL,InputR,currentGear);
+	snprintf(buf, (size_t)100, "Ball Pos: x:%f y:%f z:%f      L:%f     R:%f   Throttle: %f\0", BallLocation.x, BallLocation.y, BallLocation.z,InputL,InputR,InputThrottle);
 	string s = buf;
 	PxVec2 location = PxVec2(0, 0);
 	PxVec3 color(1, 0, 0);
@@ -185,7 +195,7 @@ void MyScene::CustomRender() {
 /// An example use of key release handling
 void MyScene::ExampleKeyReleaseHandler()
 {
-	cerr << "I am realeased!" << endl;
+	//cerr << "I am realeased!" << endl;
 }
 
 /// An example use of key presse handling
@@ -196,7 +206,33 @@ void MyScene::ExampleKeyPressHandler()
 	vehicle->mDriveDynData.forceGearChange(currentGear ? PxVehicleGearsData::eFIRST : PxVehicleGearsData::eREVERSE);
 }
 
-static float ChangeSize = 0.005;
+void PhysicsEngine::MyScene::PressBrake()
+{
+	InputBrake = true;
+}
+
+void PhysicsEngine::MyScene::ReleaseBrake()
+{
+	InputBrake = false;
+}
+
+static float ChangeSize = 0.05;
+void PhysicsEngine::MyScene::IncrementThrottle()
+{
+	InputThrottle += ChangeSize;
+	if (InputThrottle >= 1.0f) {
+		InputThrottle = 1.0f;
+	}
+}
+
+void PhysicsEngine::MyScene::DecrementThrottle()
+{
+	InputThrottle -= ChangeSize;
+	if (InputThrottle <= 0.0f) {
+		InputThrottle = 0.0f;
+	}
+}
+
 void PhysicsEngine::MyScene::IncrementL()
 {
 	InputL += ChangeSize;
